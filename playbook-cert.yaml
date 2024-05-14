@@ -1,0 +1,39 @@
+---
+- name: Copy file to planet express
+  hosts: planetexpress
+  connection: ansible.builtin.ssh
+  gather_facts: true
+
+  tasks:
+
+    - name: Copy file from controller to remote host
+      ansible.builtin.copy:
+        src: ~/test.txt
+        dest: ~/test-{{ ansible_user }}.txt
+
+    - name: Replace text from text in remote hosts
+      ansible.builtin.replace:
+        path: ~/test-{{ ansible_user }}.txt
+        regexp: "^This is a text.*"
+        replace: "This is a text modified from {{ ansible_user }}"
+
+    - name: Configure file data
+      ansible.builtin.template:
+        src: templates/file-data.txt.j2
+        dest: ~/file-data-{{ ansible_user }}.txt
+
+    - name: Copy template from remote host to controller
+      ansible.builtin.fetch:
+        src: ~/file-data-{{ ansible_user }}.txt
+        dest: ~/file-data-{{ ansible_user }}.txt
+        flat: True
+        validate_checksum: true
+
+    - name: Copy from remote host to controller
+      ansible.builtin.fetch:
+        src: ~/test-{{ ansible_user }}.txt
+        dest: ~/test-back-{{ ansible_user }}.txt
+        flat: True
+        validate_checksum: true
+        
+

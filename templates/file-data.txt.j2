@@ -1,0 +1,4 @@
+My name is: {{ ansible_user }}
+My ip address: {{ ansible_eth0.ipv4.address }}
+Today's date is: {{ ansible_date_time.date }}
+The time is: {{ ansible_date_time.time }}
